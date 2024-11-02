@@ -22,45 +22,45 @@ drawTetrisPlayground(20, 10, tetrisPlaygroundTarget)
 
 const shapes = {
 
-s:{
-  shape: [[0,1,1],
-          [1,1,0]],
-  color:'lightgreen'
-},
-z:{
-  shape: [[1,1,0],
-          [0,1,1]],
-  color:'red'
-},
-t:{
-  shape: [[1,1,1],
-          [0,1,0]],
-  color:'purple'
-},
-i:{
-  shape: [[1],
-          [1],
-          [1],
-          [1]],
-  color:'aqua'
-},
-j:{
-  shape: [[0,1],
-          [0,1],
-          [1,1]],
-  color:'blue'
-},
-l:{
-  shape: [[1,0],
-          [1,0],
-          [1,1]],
-  color:'orange'
-},
-o:{
-  shape: [[1,1],
-          [1,1]],
-  color:'yellow'
-}
+  s: {
+    shape: [[0, 1, 1],
+    [1, 1, 0]],
+    color: 'lightgreen'
+  },
+  z: {
+    shape: [[1, 1, 0],
+    [0, 1, 1]],
+    color: 'red'
+  },
+  t: {
+    shape: [[1, 1, 1],
+    [0, 1, 0]],
+    color: 'purple'
+  },
+  i: {
+    shape: [[1],
+    [1],
+    [1],
+    [1]],
+    color: 'aqua'
+  },
+  j: {
+    shape: [[0, 1],
+    [0, 1],
+    [1, 1]],
+    color: 'blue'
+  },
+  l: {
+    shape: [[1, 0],
+    [1, 0],
+    [1, 1]],
+    color: 'orange'
+  },
+  o: {
+    shape: [[1, 1],
+    [1, 1]],
+    color: 'yellow'
+  }
 }
 
 const shapeKeys = Object.keys(shapes)
@@ -74,17 +74,71 @@ const currentShape = shapes[shapeKey]
 const rowsToColor = currentShape.shape.length
 const cellsToColor = currentShape.shape[0].length
 
-console.log(rowsToColor,cellsToColor)
+console.log(rowsToColor, cellsToColor)
 
-for (let rowIndex = 0; rowIndex < rowsToColor; rowIndex++) {
-  const row = tetrisPlaygroundTarget.children[rowIndex];
 
-  for (let cellIndex = 0; cellIndex < cellsToColor; cellIndex++) {
-      const cell = row.children[cellIndex];
+
+
+///
+
+function renderShape() {
+  const rowsToColor = currentShape.shape.length
+  const cellsToColor = currentShape.shape[0].length
+
+  for (let rowIndex = 0; rowIndex < rowsToColor; rowIndex++) {
+    const row = tetrisPlaygroundTarget.children[rowIndex]
+
+    for (let cellIndex = 0; cellIndex < cellsToColor; cellIndex++) {
+      const cell = row.children[cellIndex]
       if (currentShape.shape[rowIndex][cellIndex]) {
-          cell.style.backgroundColor = currentShape.color;
+        cell.style.backgroundColor = currentShape.color
       }
+    }
   }
 }
 
-console.log()
+
+
+function rotateShape(shape) {
+  if (shape.length === 2 && shape[0].length === 2) return shape
+
+  const rotatedShape = []
+
+  for (let rowsCount = 0; rowsCount < shape[0].length; rowsCount++) {
+    const row = []
+    rotatedShape.push(row)
+  }
+  for (let i = shape.length - 1, k = 0; i >= 0; i--, k++) {
+    for (let j = 0; j < shape[0].length; j++) {
+      rotatedShape[j][k] = shape[i][j]
+    }
+  }
+  return rotatedShape
+}
+
+
+
+function removePreviousShape() {
+  const rows = tetrisPlaygroundTarget.children;
+
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+    const row = rows[rowIndex];
+
+    for (let cellIndex = 0; cellIndex < row.children.length; cellIndex++) {
+      const cell = row.children[cellIndex];
+    
+      cell.style.backgroundColor = "";
+    }
+  }
+}
+
+
+renderShape()
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    currentShape.shape = rotateShape(currentShape.shape)
+    removePreviousShape()
+    renderShape()
+  }
+})
